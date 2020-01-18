@@ -4,7 +4,7 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"sandbox/grpc/pipe"
+	"github.com/jrieck1991/channelz-web/internal/pipe"
 
 	"google.golang.org/grpc"
 )
