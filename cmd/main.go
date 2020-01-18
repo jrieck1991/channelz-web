@@ -46,7 +46,7 @@ func main() {
 
 	pipe.RegisterPipeServer(s, &p)
 	service.RegisterChannelzServiceToServer(s) // register channelz
-	reflection.Register(s)
+	reflection.Register(s)                     // register reflection api
 
 	// start serving grpc requests
 	fmt.Println("now serving grpc requests at", grpcAddr)
