@@ -1,0 +1,54 @@
+<html>
+  <head>
+    <style>
+      .cool-images {
+        width: 100%;
+        overflow: hidden;
+      }
+      .cool-images .image {
+        width: 28%;
+        float: left;
+        margin: 2%;
+        overflow: hidden;
+      }
+      .cool-images .image img {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Jack is just a down to mars kinda guy</h1>
+    <div class="cool-images">
+      <div id="one" class="image"></div>
+      <div id="two" class="image"></div>
+      <div id="buckle-my-shoe" class="image"></div>
+    </div>
+  </body>
+  <script>
+    const nasaRoverEndpoint = 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=100&api_key=PBucydF1bN74QdMkzRmNTKIqCXaJ59KvEo1mtgAP'
+    const insertImage = (divId, imageUrl) => {
+      const newImage = document.createElement('img')
+      newImage.src = imageUrl
+      const displayContainer = document.getElementById(divId)
+      if (displayContainer.firstChild) {
+        displayContainer.removeChild(displayContainer.firstChild)    
+      }
+      displayContainer.appendChild(newImage)
+    }
+    const randIntInRange = (low, high) => {
+      return Math.floor((Math.random() * high) + low);
+    }
+    const requestImages = async (resource) => {
+      const response = await fetch(resource)
+      const json = await response.json()
+      const imageArray = json.photos
+      insertImage("one", imageArray[randIntInRange(0, 400)]['img_src'])
+      insertImage("two", imageArray[randIntInRange(0, 400)]['img_src'])
+      insertImage("buckle-my-shoe", imageArray[randIntInRange(0, 400)]['img_src'])
+    }
+    // Kick off the first request
+    requestImages(nasaRoverEndpoint)
+    // Run this in a loop, every 10 seconds
+    window.setInterval(() => requestImages(nasaRoverEndpoint), 10000)
+  </script>
+</html>
