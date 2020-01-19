@@ -7,3 +7,4 @@ a web frontend for the grpc channelz api
 figure out layout
 push events
 poll for updates?
+TLS

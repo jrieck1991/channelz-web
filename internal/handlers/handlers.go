@@ -150,6 +150,7 @@ func (s *server) getServerSockets(w http.ResponseWriter, r *http.Request) {
 	rs, err := s.c.GetServerSockets(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -157,6 +158,7 @@ func (s *server) getServerSockets(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(rs.GetSocketRef())
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
