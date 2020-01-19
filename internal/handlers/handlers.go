@@ -73,16 +73,8 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // getServer return information about a grpc server
 func (s *server) getServer(w http.ResponseWriter, r *http.Request) {
 
-	// get query params
-	if err := r.ParseForm(); err != nil {
-		log.Error(err)
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-	id := r.FormValue("server_id")
-
-	// convert string id to int
-	serverID, err := strconv.Atoi(id)
+	// get server id
+	id, err := getID("server_id", r)
 	if err != nil {
 		log.Error(err)
 		w.WriteHeader(http.StatusBadRequest)
@@ -91,9 +83,10 @@ func (s *server) getServer(w http.ResponseWriter, r *http.Request) {
 
 	// form grpc request
 	in := &channelz.GetServerRequest{
-		ServerId: int64(serverID),
+		ServerId: int64(id),
 	}
 
+	// get server
 	rs, err := s.c.GetServer(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
@@ -136,32 +129,29 @@ func (s *server) getServers(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-// getServer will query the GetServer channelz function on the grpc server
+// getServerSockets returns all sockets on a grpc server
 func (s *server) getServerSockets(w http.ResponseWriter, r *http.Request) {
 
-	// get query params
-	if err := r.ParseForm(); err != nil {
-		log.Error(err)
-		return
-	}
-	id := r.FormValue("server_id")
-
-	serverID, err := strconv.Atoi(id)
+	// get server id
+	id, err := getID("server_id", r)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	in := &channelz.GetServerSocketsRequest{
-		ServerId: int64(serverID),
+		ServerId: int64(id),
 	}
 
+	// get sockets
 	rs, err := s.c.GetServerSockets(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
 		return
 	}
 
+	// marshal into json
 	b, err := json.Marshal(rs.GetSocketRef())
 	if err != nil {
 		log.Error(err)
@@ -171,31 +161,26 @@ func (s *server) getServerSockets(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-// getServer will query the GetServer channelz function on the grpc server
+// getSocket returns detailed information about a socket
 func (s *server) getSocket(w http.ResponseWriter, r *http.Request) {
 
-	// get query params
-	if err := r.ParseForm(); err != nil {
-		log.Error(err)
-		return
-	}
-	id := r.FormValue("socket_id")
-
-	// convert to int
-	socketID, err := strconv.Atoi(id)
+	// get socket id
+	id, err := getID("socket_id", r)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
 	in := &channelz.GetSocketRequest{
-		SocketId: int64(socketID),
+		SocketId: int64(id),
 	}
 
 	// get socket
 	rs, err := s.c.GetSocket(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -203,6 +188,7 @@ func (s *server) getSocket(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(rs.GetSocket())
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
@@ -212,28 +198,65 @@ func (s *server) getSocket(w http.ResponseWriter, r *http.Request) {
 // getServer will query the GetServer channelz function on the grpc server
 func (s *server) getChannel(w http.ResponseWriter, r *http.Request) {
 
-	in := &channelz.GetChannelRequest{}
+	id, err := getID("channel_id", r)
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	in := &channelz.GetChannelRequest{
+		ChannelId: int64(id),
+	}
 
 	rs, err := s.c.GetChannel(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(rs.String()))
+	// convert to json
+	b, err := json.Marshal(rs.GetChannel())
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
 }
 
 func (s *server) getSubChannel(w http.ResponseWriter, r *http.Request) {
 
-	in := &channelz.GetSubchannelRequest{}
+	// get id
+	id, err := getID("subchannel_id", r)
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	in := &channelz.GetSubchannelRequest{
+		SubchannelId: int64(id),
+	}
 
 	rs, err := s.c.GetSubchannel(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(rs.String()))
+	// convert to json
+	b, err := json.Marshal(rs.GetSubchannel())
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
 }
 
 func (s *server) getTopChannels(w http.ResponseWriter, r *http.Request) {
@@ -243,8 +266,35 @@ func (s *server) getTopChannels(w http.ResponseWriter, r *http.Request) {
 	rs, err := s.c.GetTopChannels(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(rs.String()))
+	// convert to json
+	b, err := json.Marshal(rs.GetChannel())
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
+}
+
+// getID will parse a url for an ID and return an int
+func getID(name string, r *http.Request) (int, error) {
+
+	// parse request for parameters
+	if err := r.ParseForm(); err != nil {
+		return 0, err
+	}
+	p := r.FormValue(name)
+
+	// convert to int
+	id, err := strconv.Atoi(p)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }
