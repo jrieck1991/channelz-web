@@ -70,22 +70,26 @@ func (s *server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.r.ServeHTTP(w, r)
 }
 
-// getServer will query the GetServer channelz function on the grpc server
+// getServer return information about a grpc server
 func (s *server) getServer(w http.ResponseWriter, r *http.Request) {
 
 	// get query params
 	if err := r.ParseForm(); err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 	id := r.FormValue("server_id")
 
+	// convert string id to int
 	serverID, err := strconv.Atoi(id)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
+	// form grpc request
 	in := &channelz.GetServerRequest{
 		ServerId: int64(serverID),
 	}
@@ -93,10 +97,19 @@ func (s *server) getServer(w http.ResponseWriter, r *http.Request) {
 	rs, err := s.c.GetServer(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(rs.String()))
+	// marshal response to json
+	b, err := json.Marshal(rs.GetServer())
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
 }
 
 // getServers returns all registered grpc servers
@@ -149,21 +162,51 @@ func (s *server) getServerSockets(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte(rs.String()))
+	b, err := json.Marshal(rs.GetSocketRef())
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	w.Write(b)
 }
 
 // getServer will query the GetServer channelz function on the grpc server
 func (s *server) getSocket(w http.ResponseWriter, r *http.Request) {
 
-	in := &channelz.GetSocketRequest{}
+	// get query params
+	if err := r.ParseForm(); err != nil {
+		log.Error(err)
+		return
+	}
+	id := r.FormValue("socket_id")
 
+	// convert to int
+	socketID, err := strconv.Atoi(id)
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	in := &channelz.GetSocketRequest{
+		SocketId: int64(socketID),
+	}
+
+	// get socket
 	rs, err := s.c.GetSocket(context.TODO(), in)
 	if err != nil {
 		log.Error(err)
 		return
 	}
 
-	w.Write([]byte(rs.String()))
+	// convert to json
+	b, err := json.Marshal(rs.GetSocket())
+	if err != nil {
+		log.Error(err)
+		return
+	}
+
+	w.Write(b)
 }
 
 // getServer will query the GetServer channelz function on the grpc server

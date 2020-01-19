@@ -3,20 +3,73 @@
     <style>
     </style>
   </head>
-  <body>
+  <body onload="servers();">
     <h1>Channelz</h1>
-    <button id="servers" class="float-left submit-button">Servers</button>
-    <div id="servers-text"><p>grpc servers go here</p></div>
+    <div id="end"></div>
   </body>
   <script>
   </script>
     <script>
-        document.getElementById("servers").addEventListener('click', servers);
 
+        // get all servers
         function servers() {
+
+            // call servers endpoint
             fetch("http://localhost:8080/servers")
-                .then((res) => { return res.text() })
-                .then((data) => { document.getElementById("servers-text").innerHTML = data })
+                .then((response) => response.json())
+                .then(function(data) { 
+                    
+                    // iterate over servers returned
+                    return data.map(function(s) {
+                        var id = s.ref["server_id"];
+                        server(id);
+                        server_sockets(id);
+                    })
+                })
+        }
+
+        // detail about a specific server
+        function server(server_id) {
+
+            fetch(`http://localhost:8080/server?server_id=${server_id}`)
+                .then((response) => response.json())
+                .then(function(data) {
+
+                    var serverDiv = document.createElement("div");
+                    var content = document.createTextNode(JSON.stringify(data));
+                    serverDiv.appendChild(content);
+
+                    var endDiv = document.getElementById("end");
+                    document.body.insertBefore(serverDiv, endDiv);
+                })
+        }
+
+        // return all server sockets
+        function server_sockets(server_id) {
+            fetch(`http://localhost:8080/server_sockets?server_id=${server_id}`) 
+                .then((response) => response.json())
+                .then(function(data) {
+
+                    // iterate over sockets
+                    return data.map(function(s) {
+                        socket(s.socket_id);
+                    })
+                })
+        }
+
+        // detail about a specific socket
+        function socket(socket_id) {
+            fetch(`http://localhost:8080/socket?socket_id=${socket_id}`)
+                .then((response) => response.json())
+                .then(function(data) {
+
+                    var socketDiv = document.createElement("div");
+                    var content = document.createTextNode(JSON.stringify(data));
+                    socketDiv.appendChild(content);
+
+                    var endDiv = document.getElementById("end");
+                    document.body.insertBefore(socketDiv, endDiv);
+                })
         }
     </script>
 </html>
