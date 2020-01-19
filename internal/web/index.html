@@ -25,7 +25,7 @@
                   
                   // iterate over servers returned
                   return data.map(function(s) {
-                      var id = s.ref["server_id"];
+                      let id = s.ref["server_id"];
                       server(id);
                       server_sockets(id);
                   })
@@ -81,7 +81,7 @@
               .then((response) => response.json())
               .then(function(data) {
                  appendElement("channels", data)
-                 var idsMap = JSON.parse(JSON.stringify(data.subchannel_ref));
+                 let idsMap = JSON.parse(JSON.stringify(data.subchannel_ref));
                  subchannels(idsMap)
               })
       }
@@ -89,7 +89,7 @@
       // detail about an array of subchannels
       function subchannels(subchannel_ids) {
           for (i = 0; i < subchannel_ids.length; i++) {
-              var id = JSON.stringify(subchannel_ids[i]["subchannel_id"])
+              let id = JSON.stringify(subchannel_ids[i]["subchannel_id"])
               fetch(`http://localhost:8080/subchannel?subchannel_id=${id}`)
                   .then((response) => response.json())
                   .then(function(data) {
@@ -100,8 +100,8 @@
 
       // append element to div
       function appendElement(name, json_data) {
-          var div = document.getElementById(name)
-          var content = document.createTextNode(JSON.stringify(json_data), null, 2);
+          let div = document.getElementById(name)
+          let content = document.createTextNode(JSON.stringify(json_data), null, 2);
           div.appendChild(content)
       }
   </script>
