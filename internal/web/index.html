@@ -5,59 +5,18 @@
   </head>
   <body>
     <h1>Channelz</h1>
-    <button id="server" class="float-left submit-button">Server</button>
     <button id="servers" class="float-left submit-button">Servers</button>
-    <button id="server_sockets" class="float-left submit-button">Server Sockets</button>
-    <button id="socket" class="float-left submit-button">Socket</button>
-    <button id="channel" class="float-left submit-button">Channel</button>
-    <button id="subchannel" class="float-left submit-button">SubChannel</button>
-    <button id="topchannels" class="float-left submit-button">TopChannel</button>
+    <div id="servers-text"><p>grpc servers go here</p></div>
   </body>
   <script>
   </script>
     <script>
-        document.getElementById("server").addEventListener('click', server);
         document.getElementById("servers").addEventListener('click', servers);
-        document.getElementById("server_sockets").addEventListener('click', server_sockets);
-        document.getElementById("socket").addEventListener('click', socket);
-        document.getElementById("channel").addEventListener('click', channel);
-        document.getElementById("subchannel").addEventListener('click', subchannel);
-        document.getElementById("topchannels").addEventListener('click', topchannels);
 
-        function server() {
-            fetch("http://localhost:8080/server")
-                .then((res) => { return res.text() })
-                .then((data) => { console.log(data) })
-        }
         function servers() {
             fetch("http://localhost:8080/servers")
                 .then((res) => { return res.text() })
-                .then((data) => { console.log(data) })
-        }
-        function server_sockets() {
-            fetch("http://localhost:8080/server_sockets")
-                .then((res) => { return res.text() })
-                .then((data) => { console.log(data) })
-        }
-        function socket() {
-            fetch("http://localhost:8080/socket")
-                .then((res) => { return res.text() })
-                .then((data) => { console.log(data) })
-        }
-        function channel() {
-            fetch("http://localhost:8080/channel")
-                .then((res) => { return res.text() })
-                .then((data) => { console.log(data) })
-        }
-        function subchannel() {
-            fetch("http://localhost:8080/subchannel")
-                .then((res) => { return res.text() })
-                .then((data) => { console.log(data) })
-        }
-        function topchannels() {
-            fetch("http://localhost:8080/topchannels")
-                .then((res) => { return res.text() })
-                .then((data) => { console.log(data) })
+                .then((data) => { document.getElementById("servers-text").innerHTML = data })
         }
     </script>
 </html>
