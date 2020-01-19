@@ -21,8 +21,11 @@ type server struct {
 	c channelz.ChannelzClient
 }
 
+// logger
 var log *logrus.Logger
 
+// New inits a http server with a connection to
+// the grpc server at `addr`
 func New(addr string) (Server, error) {
 
 	s := &server{}
@@ -199,7 +202,7 @@ func (s *server) getSocket(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-// getServer will query the GetServer channelz function on the grpc server
+// getChannel returns details about a channel, including events
 func (s *server) getChannel(w http.ResponseWriter, r *http.Request) {
 
 	id, err := getID("channel_id", r)
@@ -231,6 +234,7 @@ func (s *server) getChannel(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
+// getSubChannel returns details about a subchannel, including events
 func (s *server) getSubChannel(w http.ResponseWriter, r *http.Request) {
 
 	// get id
@@ -263,6 +267,7 @@ func (s *server) getSubChannel(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
+// getTopChannels will return all channels
 func (s *server) getTopChannels(w http.ResponseWriter, r *http.Request) {
 
 	in := &channelz.GetTopChannelsRequest{}

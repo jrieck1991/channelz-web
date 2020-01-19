@@ -1,6 +1,6 @@
 # channelz-web
 
-a web frontend for the grpc channelz api
+frontend and http api for the grpc channelz api
 
 ## Run
 
@@ -12,5 +12,4 @@ make run
 
 * figure out layout
 * push events
-* poll for updates?
 * TLS
