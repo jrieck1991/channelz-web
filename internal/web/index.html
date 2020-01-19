@@ -1,54 +1,63 @@
 <html>
   <head>
     <style>
-      .cool-images {
-        width: 100%;
-        overflow: hidden;
-      }
-      .cool-images .image {
-        width: 28%;
-        float: left;
-        margin: 2%;
-        overflow: hidden;
-      }
-      .cool-images .image img {
-        width: 100%;
-      }
     </style>
   </head>
   <body>
-    <h1>Jack is just a down to mars kinda guy</h1>
-    <div class="cool-images">
-      <div id="one" class="image"></div>
-      <div id="two" class="image"></div>
-      <div id="buckle-my-shoe" class="image"></div>
-    </div>
+    <h1>Channelz</h1>
+    <button id="server" class="float-left submit-button">Server</button>
+    <button id="servers" class="float-left submit-button">Servers</button>
+    <button id="server_sockets" class="float-left submit-button">Server Sockets</button>
+    <button id="socket" class="float-left submit-button">Socket</button>
+    <button id="channel" class="float-left submit-button">Channel</button>
+    <button id="subchannel" class="float-left submit-button">SubChannel</button>
+    <button id="topchannels" class="float-left submit-button">TopChannel</button>
   </body>
   <script>
-    const nasaRoverEndpoint = 'https://api.nasa.gov/mars-photos/api/v1/rovers/curiosity/photos?sol=100&api_key=PBucydF1bN74QdMkzRmNTKIqCXaJ59KvEo1mtgAP'
-    const insertImage = (divId, imageUrl) => {
-      const newImage = document.createElement('img')
-      newImage.src = imageUrl
-      const displayContainer = document.getElementById(divId)
-      if (displayContainer.firstChild) {
-        displayContainer.removeChild(displayContainer.firstChild)    
-      }
-      displayContainer.appendChild(newImage)
-    }
-    const randIntInRange = (low, high) => {
-      return Math.floor((Math.random() * high) + low);
-    }
-    const requestImages = async (resource) => {
-      const response = await fetch(resource)
-      const json = await response.json()
-      const imageArray = json.photos
-      insertImage("one", imageArray[randIntInRange(0, 400)]['img_src'])
-      insertImage("two", imageArray[randIntInRange(0, 400)]['img_src'])
-      insertImage("buckle-my-shoe", imageArray[randIntInRange(0, 400)]['img_src'])
-    }
-    // Kick off the first request
-    requestImages(nasaRoverEndpoint)
-    // Run this in a loop, every 10 seconds
-    window.setInterval(() => requestImages(nasaRoverEndpoint), 10000)
   </script>
+    <script>
+        document.getElementById("server").addEventListener('click', server);
+        document.getElementById("servers").addEventListener('click', servers);
+        document.getElementById("server_sockets").addEventListener('click', server_sockets);
+        document.getElementById("socket").addEventListener('click', socket);
+        document.getElementById("channel").addEventListener('click', channel);
+        document.getElementById("subchannel").addEventListener('click', subchannel);
+        document.getElementById("topchannels").addEventListener('click', topchannels);
+
+        function server() {
+            fetch("http://localhost:8080/server")
+                .then((res) => { return res.text() })
+                .then((data) => { console.log(data) })
+        }
+        function servers() {
+            fetch("http://localhost:8080/servers")
+                .then((res) => { return res.text() })
+                .then((data) => { console.log(data) })
+        }
+        function server_sockets() {
+            fetch("http://localhost:8080/server_sockets")
+                .then((res) => { return res.text() })
+                .then((data) => { console.log(data) })
+        }
+        function socket() {
+            fetch("http://localhost:8080/socket")
+                .then((res) => { return res.text() })
+                .then((data) => { console.log(data) })
+        }
+        function channel() {
+            fetch("http://localhost:8080/channel")
+                .then((res) => { return res.text() })
+                .then((data) => { console.log(data) })
+        }
+        function subchannel() {
+            fetch("http://localhost:8080/subchannel")
+                .then((res) => { return res.text() })
+                .then((data) => { console.log(data) })
+        }
+        function topchannels() {
+            fetch("http://localhost:8080/topchannels")
+                .then((res) => { return res.text() })
+                .then((data) => { console.log(data) })
+        }
+    </script>
 </html>
