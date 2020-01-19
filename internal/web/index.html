@@ -14,97 +14,95 @@
     <div id="subchannels"></div>
   </body>
   <script>
+
+      // get all servers
+      function servers() {
+
+          // call servers endpoint
+          fetch("http://localhost:8080/servers")
+              .then((response) => response.json())
+              .then(function(data) { 
+                  
+                  // iterate over servers returned
+                  return data.map(function(s) {
+                      var id = s.ref["server_id"];
+                      server(id);
+                      server_sockets(id);
+                  })
+              })
+      }
+
+      // detail about a specific server
+      function server(server_id) {
+
+          fetch(`http://localhost:8080/server?server_id=${server_id}`)
+              .then((response) => response.json())
+              .then(function(data) {
+                  appendElement("servers", data)
+              })
+      }
+
+      // return all server sockets
+      function server_sockets(server_id) {
+          fetch(`http://localhost:8080/server_sockets?server_id=${server_id}`) 
+              .then((response) => response.json())
+              .then(function(data) {
+
+                  // iterate over sockets
+                  return data.map(function(s) {
+                      socket(s.socket_id);
+                  })
+              })
+      }
+
+      // detail about a specific socket
+      function socket(socket_id) {
+          fetch(`http://localhost:8080/socket?socket_id=${socket_id}`)
+              .then((response) => response.json())
+              .then(function(data) {
+                  appendElement("sockets", data)
+              })
+      }
+
+      // get all channels
+      function topchannels() {
+          fetch(`http://localhost:8080/topchannels`)
+              .then((response) => response.json())
+              .then(function(data) {
+                  return data.map(function(chan) {
+                      channel(chan.ref.channel_id)
+                  })
+              })
+      }
+      
+      // detail about a channel
+      function channel(channel_id) {
+          fetch(`http://localhost:8080/channel?channel_id=${channel_id}`)
+              .then((response) => response.json())
+              .then(function(data) {
+                 appendElement("channels", data)
+                 var idsMap = JSON.parse(JSON.stringify(data.subchannel_ref));
+                 subchannels(idsMap)
+              })
+      }
+
+      // detail about an array of subchannels
+      function subchannels(subchannel_ids) {
+          for (i = 0; i < subchannel_ids.length; i++) {
+              var id = JSON.stringify(subchannel_ids[i]["subchannel_id"])
+              fetch(`http://localhost:8080/subchannel?subchannel_id=${id}`)
+                  .then((response) => response.json())
+                  .then(function(data) {
+                      appendElement("subchannels", data)
+                  })
+          }
+      }
+
+      // append element to div
+      function appendElement(name, json_data) {
+          var div = document.getElementById(name)
+          var content = document.createTextNode(JSON.stringify(json_data), null, 2);
+          div.appendChild(content)
+      }
   </script>
-    <script>
-
-        // get all servers
-        function servers() {
-
-            // call servers endpoint
-            fetch("http://localhost:8080/servers")
-                .then((response) => response.json())
-                .then(function(data) { 
-                    
-                    // iterate over servers returned
-                    return data.map(function(s) {
-                        var id = s.ref["server_id"];
-                        server(id);
-                        server_sockets(id);
-                    })
-                })
-        }
-
-        // detail about a specific server
-        function server(server_id) {
-
-            fetch(`http://localhost:8080/server?server_id=${server_id}`)
-                .then((response) => response.json())
-                .then(function(data) {
-                    appendElement("servers", data)
-                })
-        }
-
-        // return all server sockets
-        function server_sockets(server_id) {
-            fetch(`http://localhost:8080/server_sockets?server_id=${server_id}`) 
-                .then((response) => response.json())
-                .then(function(data) {
-
-                    // iterate over sockets
-                    return data.map(function(s) {
-                        socket(s.socket_id);
-                    })
-                })
-        }
-
-        // detail about a specific socket
-        function socket(socket_id) {
-            fetch(`http://localhost:8080/socket?socket_id=${socket_id}`)
-                .then((response) => response.json())
-                .then(function(data) {
-                    appendElement("sockets", data)
-                })
-        }
-
-        // get all channels
-        function topchannels() {
-            fetch(`http://localhost:8080/topchannels`)
-                .then((response) => response.json())
-                .then(function(data) {
-                    return data.map(function(chan) {
-                        channel(chan.ref.channel_id)
-                    })
-                })
-        }
-        
-        // detail about a channel
-        function channel(channel_id) {
-            fetch(`http://localhost:8080/channel?channel_id=${channel_id}`)
-                .then((response) => response.json())
-                .then(function(data) {
-                   appendElement("channels", data)
-                   var idsMap = JSON.parse(JSON.stringify(data.subchannel_ref));
-                   subchannels(idsMap)
-                })
-        }
-
-        // detail about an array of subchannels
-        function subchannels(subchannel_ids) {
-            for (i = 0; i < subchannel_ids.length; i++) {
-                var id = JSON.stringify(subchannel_ids[i]["subchannel_id"])
-                fetch(`http://localhost:8080/subchannel?subchannel_id=${id}`)
-                    .then((response) => response.json())
-                    .then(function(data) {
-                        appendElement("subchannels", data)
-                    })
-            }
-        }
-
-        // append element to div
-        function appendElement(name, json_data) {
-            var div = document.getElementById(name)
-            var content = document.createTextNode(JSON.stringify(json_data), null, 2);
-            div.appendChild(content)
-        }
-    </script>
 </html>

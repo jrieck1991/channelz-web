@@ -2,6 +2,12 @@
 
 a web frontend for the grpc channelz api
 
+## Run
+
+```bash
+make run
+```
+
 ## TODO
 
 * figure out layout
