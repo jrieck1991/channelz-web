@@ -3,9 +3,15 @@
     <style>
     </style>
   </head>
-  <body onload="servers();">
-    <h1>Channelz</h1>
-    <div id="end"></div>
+  <body onload="servers(); topchannels();">
+    <h1>Servers</h1>
+    <div id="servers"></div>
+    <h1>Sockets</h1>
+    <div id="sockets"></div>
+    <h1>Channels</h1>
+    <div id="channels"></div>
+    <h1>SubChannels</h1>
+    <div id="subchannels"></div>
   </body>
   <script>
   </script>
@@ -34,13 +40,7 @@
             fetch(`http://localhost:8080/server?server_id=${server_id}`)
                 .then((response) => response.json())
                 .then(function(data) {
-
-                    var serverDiv = document.createElement("div");
-                    var content = document.createTextNode(JSON.stringify(data));
-                    serverDiv.appendChild(content);
-
-                    var endDiv = document.getElementById("end");
-                    document.body.insertBefore(serverDiv, endDiv);
+                    appendElement("servers", data)
                 })
         }
 
@@ -62,14 +62,49 @@
             fetch(`http://localhost:8080/socket?socket_id=${socket_id}`)
                 .then((response) => response.json())
                 .then(function(data) {
-
-                    var socketDiv = document.createElement("div");
-                    var content = document.createTextNode(JSON.stringify(data));
-                    socketDiv.appendChild(content);
-
-                    var endDiv = document.getElementById("end");
-                    document.body.insertBefore(socketDiv, endDiv);
+                    appendElement("sockets", data)
                 })
+        }
+
+        // get all channels
+        function topchannels() {
+            fetch(`http://localhost:8080/topchannels`)
+                .then((response) => response.json())
+                .then(function(data) {
+                    return data.map(function(chan) {
+                        channel(chan.ref.channel_id)
+                    })
+                })
+        }
+        
+        // detail about a channel
+        function channel(channel_id) {
+            fetch(`http://localhost:8080/channel?channel_id=${channel_id}`)
+                .then((response) => response.json())
+                .then(function(data) {
+                   appendElement("channels", data)
+                   var idsMap = JSON.parse(JSON.stringify(data.subchannel_ref));
+                   subchannels(idsMap)
+                })
+        }
+
+        // detail about an array of subchannels
+        function subchannels(subchannel_ids) {
+            for (i = 0; i < subchannel_ids.length; i++) {
+                var id = JSON.stringify(subchannel_ids[i]["subchannel_id"])
+                fetch(`http://localhost:8080/subchannel?subchannel_id=${id}`)
+                    .then((response) => response.json())
+                    .then(function(data) {
+                        appendElement("subchannels", data)
+                    })
+            }
+        }
+
+        // append element to div
+        function appendElement(name, json_data) {
+            var div = document.getElementById(name)
+            var content = document.createTextNode(JSON.stringify(json_data));
+            div.appendChild(content)
         }
     </script>
 </html>

@@ -52,8 +52,10 @@ func route(s *server) {
 
 	r := mux.NewRouter()
 
+	// web frontend
 	r.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("internal/web"))))
 
+	// api
 	r.HandleFunc("/server", s.getServer).Methods(http.MethodGet)
 	r.HandleFunc("/servers", s.getServers).Methods(http.MethodGet)
 	r.HandleFunc("/server_sockets", s.getServerSockets).Methods(http.MethodGet)
