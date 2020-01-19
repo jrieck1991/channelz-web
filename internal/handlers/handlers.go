@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"strconv"
 
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	channelz "google.golang.org/grpc/channelz/grpc_channelz_v1"
 )
@@ -19,15 +21,23 @@ type server struct {
 	c channelz.ChannelzClient
 }
 
+var log *logrus.Logger
+
 func New(addr string) (Server, error) {
 
 	s := &server{}
 
-	// init grpc server channelz client
+	log = logrus.New()
+	log.SetFormatter(&logrus.TextFormatter{})
+
+	// connect to grpc server plaintext
+	// TODO: add TLS support
 	conn, err := grpc.Dial(addr, grpc.WithInsecure(), grpc.WithBlock())
 	if err != nil {
 		return nil, err
 	}
+
+	// init channelz client from connection
 	client := channelz.NewChannelzClient(conn)
 	s.c = client
 
@@ -65,12 +75,14 @@ func (s *server) getServer(w http.ResponseWriter, r *http.Request) {
 
 	// get query params
 	if err := r.ParseForm(); err != nil {
+		log.Error(err)
 		return
 	}
 	id := r.FormValue("server_id")
 
 	serverID, err := strconv.Atoi(id)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -80,23 +92,35 @@ func (s *server) getServer(w http.ResponseWriter, r *http.Request) {
 
 	rs, err := s.c.GetServer(context.TODO(), in)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
 	w.Write([]byte(rs.String()))
 }
 
-// getServer will query the GetServer channelz function on the grpc server
+// getServers returns all registered grpc servers
 func (s *server) getServers(w http.ResponseWriter, r *http.Request) {
 
 	in := &channelz.GetServersRequest{}
 
+	// call channelz api
 	rs, err := s.c.GetServers(context.TODO(), in)
 	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	w.Write([]byte(rs.String()))
+	// marshal requst to json
+	b, err := json.Marshal(rs.GetServer())
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(b)
 }
 
 // getServer will query the GetServer channelz function on the grpc server
@@ -104,12 +128,14 @@ func (s *server) getServerSockets(w http.ResponseWriter, r *http.Request) {
 
 	// get query params
 	if err := r.ParseForm(); err != nil {
+		log.Error(err)
 		return
 	}
 	id := r.FormValue("server_id")
 
 	serverID, err := strconv.Atoi(id)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -119,6 +145,7 @@ func (s *server) getServerSockets(w http.ResponseWriter, r *http.Request) {
 
 	rs, err := s.c.GetServerSockets(context.TODO(), in)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -132,6 +159,7 @@ func (s *server) getSocket(w http.ResponseWriter, r *http.Request) {
 
 	rs, err := s.c.GetSocket(context.TODO(), in)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -145,6 +173,7 @@ func (s *server) getChannel(w http.ResponseWriter, r *http.Request) {
 
 	rs, err := s.c.GetChannel(context.TODO(), in)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -157,6 +186,7 @@ func (s *server) getSubChannel(w http.ResponseWriter, r *http.Request) {
 
 	rs, err := s.c.GetSubchannel(context.TODO(), in)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
@@ -169,6 +199,7 @@ func (s *server) getTopChannels(w http.ResponseWriter, r *http.Request) {
 
 	rs, err := s.c.GetTopChannels(context.TODO(), in)
 	if err != nil {
+		log.Error(err)
 		return
 	}
 
