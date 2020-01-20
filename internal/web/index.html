@@ -4,105 +4,15 @@
     </style>
   </head>
   <body onload="servers(); topchannels();">
-    <h1>Servers</h1>
-    <div id="servers"></div>
-    <h1>Sockets</h1>
-    <div id="sockets"></div>
-    <h1>Channels</h1>
-    <div id="channels"></div>
-    <h1>SubChannels</h1>
-    <div id="subchannels"></div>
+    <h1>Channelz Web</h1>
+    <div id="end"></div>
   </body>
+  <script src="/static/endpoints.js"></script>
   <script>
+    // refresh servers every 10 seconds
+    window.setInterval(() => servers(), 1000)
 
-      // get all servers
-      function servers() {
-
-          // call servers endpoint
-          fetch("http://localhost:8080/servers")
-              .then((response) => response.json())
-              .then(function(data) { 
-                  
-                  // iterate over servers returned
-                  return data.map(function(s) {
-                      let id = s.ref["server_id"];
-                      server(id);
-                      server_sockets(id);
-                  })
-              })
-      }
-
-      // detail about a specific server
-      function server(server_id) {
-
-          fetch(`http://localhost:8080/server?server_id=${server_id}`)
-              .then((response) => response.json())
-              .then(function(data) {
-                  appendElement("servers", data)
-              })
-      }
-
-      // return all server sockets
-      function server_sockets(server_id) {
-          fetch(`http://localhost:8080/server_sockets?server_id=${server_id}`) 
-              .then((response) => response.json())
-              .then(function(data) {
-
-                  // iterate over sockets
-                  return data.map(function(s) {
-                      socket(s.socket_id);
-                  })
-              })
-      }
-
-      // detail about a specific socket
-      function socket(socket_id) {
-          fetch(`http://localhost:8080/socket?socket_id=${socket_id}`)
-              .then((response) => response.json())
-              .then(function(data) {
-                  appendElement("sockets", data)
-              })
-      }
-
-      // get all channels
-      function topchannels() {
-          fetch(`http://localhost:8080/topchannels`)
-              .then((response) => response.json())
-              .then(function(data) {
-                  return data.map(function(chan) {
-                      channel(chan.ref.channel_id)
-                  })
-              })
-      }
-      
-      // detail about a channel
-      function channel(channel_id) {
-          fetch(`http://localhost:8080/channel?channel_id=${channel_id}`)
-              .then((response) => response.json())
-              .then(function(data) {
-                 appendElement("channels", data)
-                 let idsMap = JSON.parse(JSON.stringify(data.subchannel_ref));
-                 subchannels(idsMap)
-              })
-      }
-
-      // detail about an array of subchannels
-      function subchannels(subchannel_ids) {
-          for (i = 0; i < subchannel_ids.length; i++) {
-              let id = JSON.stringify(subchannel_ids[i]["subchannel_id"])
-              fetch(`http://localhost:8080/subchannel?subchannel_id=${id}`)
-                  .then((response) => response.json())
-                  .then(function(data) {
-                      appendElement("subchannels", data)
-                  })
-          }
-      }
-
-      // append element to div
-      function appendElement(name, json_data) {
-          let div = document.getElementById(name)
-          let content = document.createTextNode(JSON.stringify(json_data), null, 2);
-          div.appendChild(content)
-      }
+    // refresh channels every 10 seconds
+    window.setInterval(() => topchannels(), 1000)
   </script>
 </html>

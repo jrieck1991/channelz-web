@@ -55,8 +55,13 @@ func route(s *server) {
 
 	r := mux.NewRouter()
 
-	// web frontend
-	r.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("internal/web"))))
+	// index
+	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "internal/web/index.html")
+	})
+
+	// js
+	r.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("internal/web/js"))))
 
 	// api
 	r.HandleFunc("/server", s.getServer).Methods(http.MethodGet)
@@ -290,7 +295,7 @@ func (s *server) getTopChannels(w http.ResponseWriter, r *http.Request) {
 	w.Write(b)
 }
 
-// getID will parse a url for an ID and return an int
+// getID will parse a url for a named ID and return an int
 func getID(name string, r *http.Request) (int, error) {
 
 	// parse request for parameters

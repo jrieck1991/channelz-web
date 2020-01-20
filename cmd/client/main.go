@@ -4,6 +4,8 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
+	"time"
+
 	"github.com/jrieck1991/channelz-web/internal/pipe"
 
 	"google.golang.org/grpc"
@@ -39,6 +41,8 @@ func main() {
 			panic(err)
 		}
 		fmt.Printf("client: sent payload %d sucess\n", i)
+
+		time.Sleep(1 * time.Second)
 	}
 
 }
