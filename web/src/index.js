@@ -26,7 +26,4 @@ class SubChannel extends React.Component {
     }
 }
 
-$(document).ready(function () {
-    $('div#root').remore();
-    ReactDOM.render(<Server />, document.getElementById('root'))
-})
+ReactDOM.render(<Server />, document.getElementById('root'))
