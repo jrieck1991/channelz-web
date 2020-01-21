@@ -34,6 +34,7 @@ function server_sockets(server_id) {
             // iterate over sockets
             return data.map(function(s) {
                 socket(s.socket_id);
+                //elementAction(`Server-${server_id}`, data)
             })
         })
 }
