@@ -1,6 +1,6 @@
 # channelz-web
 
-frontend and http api for the grpc channelz api
+an api + frontend for the grpc channelz service
 
 ## Run
 
