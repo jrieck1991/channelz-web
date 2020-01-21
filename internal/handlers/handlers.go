@@ -57,11 +57,11 @@ func route(s *server) {
 
 	// index
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "internal/web/index.html")
+		http.ServeFile(w, r, "web/index.html")
 	})
 
 	// js
-	r.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("internal/web/js"))))
+	r.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("web/js"))))
 
 	// api
 	r.HandleFunc("/server", s.getServer).Methods(http.MethodGet)
