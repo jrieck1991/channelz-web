@@ -1,10 +1,13 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css'
+var React = require('react');
+var ReactDOM = require('react-dom');
 
 class Server extends React.Component {
     render() {
-        return <h1>Hello World</h1>;
+        return (
+            <div>
+                <h1>Server</h1>
+            </div>
+        );
     }
 }
 
@@ -23,7 +26,7 @@ class SubChannel extends React.Component {
     }
 }
 
-ReactDOM.render(
-    <Server />,
-    document.getElementById('root')
-);
+$(document).ready(function () {
+    $('div#root').remore();
+    ReactDOM.render(<Server />, document.getElementById('root'))
+})
