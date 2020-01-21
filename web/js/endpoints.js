@@ -3,18 +3,16 @@ function getServers() {
     return fetch("http://localhost:8080/servers")
 }
 
-// getServerIDs
-function getServerIDs(response) {
+function createServers(response) {
 
-    let ids = []
     response.then((response) => response.json())
         .then(function(data) {
             data.map(function(s) {
-                ids.push(s.ref["server_id"])
+                let id = s.ref["server_id"]
+                console.log("creating server class with id:", id)
+                new Server(id)
             })
         })
-
-    return ids
 }
 
 // detail about a specific server
