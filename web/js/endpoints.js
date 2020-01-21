@@ -1,18 +1,20 @@
 // get all servers
-function servers() {
+function getServers() {
+    return fetch("http://localhost:8080/servers")
+}
 
-    // call servers endpoint
-    fetch("http://localhost:8080/servers")
-        .then((response) => response.json())
-        .then(function(data) { 
-            
-            // iterate over servers returned
-            return data.map(function(s) {
-                let id = s.ref["server_id"];
-                server(id);
-                server_sockets(id);
+// getServerIDs
+function getServerIDs(response) {
+
+    let ids = []
+    response.then((response) => response.json())
+        .then(function(data) {
+            data.map(function(s) {
+                ids.push(s.ref["server_id"])
             })
         })
+
+    return ids
 }
 
 // detail about a specific server

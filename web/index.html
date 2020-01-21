@@ -3,16 +3,19 @@
     <style>
     </style>
   </head>
-  <body onload="servers(); topchannels();">
+  <body>
     <h1>Channelz Web</h1>
-    <div id="end"></div>
   </body>
   <script src="/static/endpoints.js"></script>
+  <script src="/static/server.js"></script>
   <script>
-    // refresh servers every 10 seconds
-    window.setInterval(() => servers(), 1000)
+    let rs = getServers();
+    let ids = getServerIDs(rs);
+    ids.forEach(null)
+    // refresh servers every second
+    //window.setInterval(() => servers(), 1000)
 
-    // refresh channels every 10 seconds
-    window.setInterval(() => topchannels(), 1000)
+    //// refresh channels every second
+    //window.setInterval(() => topchannels(), 1000)
   </script>
 </html>
