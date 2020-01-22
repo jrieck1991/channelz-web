@@ -55,13 +55,16 @@ func route(s *server) {
 
 	r := mux.NewRouter()
 
-	// index
+	// index page
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/index.html")
+		http.ServeFile(w, r, "public/index.html")
 	})
 
 	// js
-	r.PathPrefix("/static").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("web/js"))))
+	r.PathPrefix("/js").Handler(http.StripPrefix("/js", http.FileServer(http.Dir("public/js"))))
+
+	// css
+	r.PathPrefix("/css").Handler(http.StripPrefix("/css", http.FileServer(http.Dir("public/css"))))
 
 	// api
 	r.HandleFunc("/server", s.getServer).Methods(http.MethodGet)

@@ -1,0 +1,10 @@
+body {
+    font: 14px "Century Gothic", sans-serif;
+    margin: 20px;
+}
+
+.server {
+    background: #fff;
+    border: 1px solid #999;
+    float: left;
+}
