@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <style>
+    </style>
+  </head>
+  <body onload="servers(); topchannels();">
+    <h1>Channelz Web</h1>
+    <div id="end"></div>
+  </body>
+  <script src="/static/endpoints.js"></script>
+  <script>
+    // refresh servers every 10 seconds
+    window.setInterval(() => servers(), 1000)
+
+    // refresh channels every 10 seconds
+    window.setInterval(() => topchannels(), 1000)
+  </script>
+</html>
