@@ -1,5 +1,5 @@
 // get ids of grpc servers
-export function getServerIDs() {
+function getServerIDs() {
 
     let ids = []
 

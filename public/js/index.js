@@ -1,6 +1,6 @@
-import { getServerIDs } from './endpoints.js'
+//import * as endpoints from './endpoints.js';
 
-class ServersContainer extends react.Component {
+class ServersContainer extends React.Component {
     constructor() {
         super();
     }
@@ -8,20 +8,14 @@ class ServersContainer extends react.Component {
     render() {
 
         // get server ids
-        let ids = getServerIDs()
-
-        let servers = []
-
-        for (i = 0; i < ids.length; i++) {
-            servers.push(<li>{ids[i]}</li>)
-        }
+        //let ids = getServerIDs()
 
         return (
             <div>
                 <h1>Channelz Web</h1>
-                <ul>
-                    {servers}
-                </ul>
+                {ids.map((id, index) => {
+                    return <Server id={id} />
+                })}
             </div>
         )
     }
@@ -56,4 +50,4 @@ class SubChannel extends React.Component {
     }
 }
 
-ReactDOM.render(<Server />, document.getElementById('root'))
+ReactDOM.render(<ServersContainer />, document.getElementById('root'))
