@@ -1,19 +1,32 @@
-//import * as endpoints from './endpoints.js';
-
 class ServersContainer extends React.Component {
+
     constructor() {
         super();
+        this.state = {ids: []};
+    }
+
+    componentDidMount() {
+
+        let ids = []
+
+        fetch("http://localhost:8080/servers")
+            .then((response) => response.json())
+            .then(function(data) { 
+
+                // iterate over servers returned
+                return data.map(function(s) {
+                    let id = s.ref["server_id"];
+                    ids.push(id)
+                })
+            })
+        this.setState({ids: ids});
     }
 
     render() {
-
-        // get server ids
-        //let ids = getServerIDs()
-
         return (
             <div>
                 <h1>Channelz Web</h1>
-                {ids.map((id, index) => {
+                {this.state.ids.map((id, index) => {
                     return <Server id={id} />
                 })}
             </div>
@@ -28,7 +41,7 @@ class Server extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id={this.props.id}>
                 <h1>Server-{this.props.id}</h1>
             </div>
         );
