@@ -57,11 +57,14 @@ func route(s *server) {
 
 	// index page
 	r.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "web/index.html")
+		http.ServeFile(w, r, "public/index.html")
 	})
 
 	// js
-	r.PathPrefix("/src").Handler(http.StripPrefix("/src", http.FileServer(http.Dir("web/src"))))
+	r.PathPrefix("/js").Handler(http.StripPrefix("/js", http.FileServer(http.Dir("public/js"))))
+
+	// css
+	r.PathPrefix("/css").Handler(http.StripPrefix("/css", http.FileServer(http.Dir("public/css"))))
 
 	// api
 	r.HandleFunc("/server", s.getServer).Methods(http.MethodGet)
