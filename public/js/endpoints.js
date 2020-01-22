@@ -1,5 +1,7 @@
-// get all servers
-function servers() {
+// get ids of grpc servers
+export function getServerIDs() {
+
+    let ids = []
 
     // call servers endpoint
     fetch("http://localhost:8080/servers")
@@ -9,10 +11,11 @@ function servers() {
             // iterate over servers returned
             return data.map(function(s) {
                 let id = s.ref["server_id"];
-                server(id);
-                server_sockets(id);
+                ids.push(id)
             })
         })
+
+    return ids
 }
 
 // detail about a specific server
