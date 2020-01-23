@@ -35,7 +35,7 @@ class ServersContainer extends React.Component {
     }
 }
 
-class ListenerSocketsContainer extends React.Component {
+class ListenerSockets extends React.Component {
 
     constructor() {
         super();
@@ -60,7 +60,7 @@ class ListenerSocketsContainer extends React.Component {
                 })
 
                 self.setState({
-                    listen_socket_ids: socket_ids,
+                    socket_ids: socket_ids,
                 })
             })
         
@@ -69,10 +69,10 @@ class ListenerSocketsContainer extends React.Component {
     render() {
         return (
             <div className="SocketsContainer">
-                <h4>Listener Sockets</h4>
+                <h2>Listener Sockets</h2>
                 {this.state.socket_ids.length > 0 && 
                     this.state.socket_ids.map((id, index) => {
-                        return <Socket id={id} />;
+                        return <Socket socket_id={id} />;
                     })
                 }
             </div>
@@ -164,7 +164,7 @@ class Server extends React.Component {
                 <p>calls_succeeded: {this.state.calls_succeeded}</p>
                 <p>last_call_started: {this.state.last_call_started_timestamp}</p>
 
-                <ListenerSocketsContainer server_id={this.props.id}/>
+                <ListenerSockets server_id={this.props.id}/>
                 <ChannelsContainer />
             </div>
         );
@@ -185,7 +185,7 @@ class Socket extends React.Component {
         const self = this;
 
         // get detailed socket data
-        fetch(`http://localhost:8080/socket?socket_id=${this.props.id}`)
+        fetch(`http://localhost:8080/socket?socket_id=${this.props.socket_id}`)
             .then((response) => response.json())
             .then(function(json) {
                 self.setState({
@@ -198,8 +198,8 @@ class Socket extends React.Component {
 
     render() {
         return (
-            <div className="Socket" id={this.props.id}>
-                <h3>Socket-{this.props.id}</h3>
+            <div className="Socket" id={this.props.socket_id}>
+                <h3>Socket-{this.props.socket_id}</h3>
                 <p>{this.state.ip_address}:{this.state.port}</p>
             </div>
         )
@@ -268,6 +268,7 @@ class SubChannel extends React.Component {
         this.state = {
             target: "",
             events: [],
+            sockets: [],
             num_events_logged: 0,
             subchannel_creation_timestamp: 0,
         }
@@ -285,10 +286,12 @@ class SubChannel extends React.Component {
                 const events = json.data.trace.events
                 const num_events_logged = json.data.trace.num_events_logged
                 const subchannel_creation_timestamp = json.data.trace.creation_timestamp.seconds
+                const sockets = json.socket_ref
 
                 self.setState({
                     target: target,
                     events: events,
+                    sockets: sockets,
                     num_events_logged: num_events_logged,
                     channel_creation_timestamp: subchannel_creation_timestamp,
                 })
@@ -300,6 +303,12 @@ class SubChannel extends React.Component {
             <div className="SubChannel" id={this.props.subchannel_id}>
                 <h4>SubChannel-{this.props.subchannel_id}</h4>
                 <p>target: {this.state.target}</p>
+
+                {this.state.sockets.length > 0 && 
+                    this.state.sockets.map((id, index) => {
+                        return <Socket socket_id={id.socket_id} />;
+                    })
+                }
 
                 <Events num_events_logged={this.state.num_events_logged} events={this.state.events}/>
             </div>
