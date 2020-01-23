@@ -122,7 +122,6 @@ class ChannelsContainer extends React.Component {
     }
 }
 //class SubChannelsContainer extends React.Component {}
-
 class Server extends React.Component {
 
     constructor() {
@@ -214,6 +213,8 @@ class Channel extends React.Component {
         this.state = {
             target: "",
             events: [],
+            num_events_logged: 0,
+            channel_creation_timestamp: 0,
             subchannel_ids: [],
         }
     }
@@ -227,12 +228,16 @@ class Channel extends React.Component {
             .then(function(json) {
                 
                 const target = json.data.target
-                const events = json.data.events
-                const subchannel_ids = json.data.subchannel_ref
+                const events = json.data.trace.events
+                const num_events_logged = json.data.trace.num_events_logged
+                const channel_creation_timestamp = json.data.trace.creation_timestamp.seconds
+                const subchannel_ids = json.subchannel_ref
 
                 self.setState({
                     target: target,
                     events: events,
+                    num_events_logged: num_events_logged,
+                    channel_creation_timestamp: channel_creation_timestamp,
                     subchannel_ids: subchannel_ids,
                 })
             })
@@ -244,21 +249,74 @@ class Channel extends React.Component {
                 <h4>Channel-{this.props.channel_id}</h4>
                 <p>target: {this.state.target}</p>
 
-                <h3>Events</h3>
-                <ul>
-                {this.state.events && 
-                    this.state.events.map((event, index) => {
-                    <li>{index+1}-{event}</li>
-                })}
-                </ul>
+                <Events num_events_logged={this.state.num_events_logged} events={this.state.events}/>
+
+                {this.state.subchannel_ids.length > 0 &&
+                    this.state.subchannel_ids.map((id, index) => {
+                        return <SubChannel subchannel_id={id.subchannel_id} />;
+                    })
+                }
             </div>
         )
     }
 }
 
 class SubChannel extends React.Component {
-    render() {
+
+    constructor() {
+        super();
+        this.state = {
+            target: "",
+            events: [],
+            num_events_logged: 0,
+            subchannel_creation_timestamp: 0,
+        }
     }
+
+    componentDidMount() {
+
+        const self = this;
+
+        fetch(`http://localhost:8080/subchannel?subchannel_id=${this.props.subchannel_id}`)
+            .then((response) => response.json())
+            .then(function(json) {
+                
+                const target = json.data.target
+                const events = json.data.trace.events
+                const num_events_logged = json.data.trace.num_events_logged
+                const subchannel_creation_timestamp = json.data.trace.creation_timestamp.seconds
+
+                self.setState({
+                    target: target,
+                    events: events,
+                    num_events_logged: num_events_logged,
+                    channel_creation_timestamp: subchannel_creation_timestamp,
+                })
+            })
+    }
+
+    render() {
+        return (
+            <div className="SubChannel" id={this.props.subchannel_id}>
+                <h4>SubChannel-{this.props.subchannel_id}</h4>
+                <p>target: {this.state.target}</p>
+
+                <Events num_events_logged={this.state.num_events_logged} events={this.state.events}/>
+            </div>
+        )
+    }
+}
+
+function Events(props) {
+    return (
+        <div className="Events">
+           <h3>Events</h3>
+           <p>number_of_events_logged: {props.num_events_logged}</p>
+           {props.events.map((event, index) => {
+               return <p>{index+1}: {event.description}</p>;
+           })}
+        </div>
+    )
 }
 
 ReactDOM.render(<ServersContainer />, document.getElementById('root'))
