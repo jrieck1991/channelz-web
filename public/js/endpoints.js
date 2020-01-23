@@ -20,16 +20,7 @@ function getServerIDs() {
 
 // return all server sockets
 function server_sockets(server_id) {
-    fetch(`http://localhost:8080/server_sockets?server_id=${server_id}`) 
-        .then((response) => response.json())
-        .then(function(data) {
-
-            // iterate over sockets
-            return data.map(function(s) {
-                socket(s.socket_id);
-                //elementAction(`Server-${server_id}`, data)
-            })
-        })
+    
 }
 
 // detail about a specific socket
