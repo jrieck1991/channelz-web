@@ -1,19 +1,17 @@
 .Server {
-    border: 1px solid #999;
+    background-color: #264653;
 }
 
 .Socket {
-    border: 1px solid #999;
+    background-color: #2A9D8F;
 }
 
 .Channel {
-    border: 1px solid #999;
+    background-color: #E9C46A;
 }
 
 .SubChannel {
-    border: 1px solid #999;
+    background-color: #F4A261;
 }
 
-.Events {
-    border: 1px solid #999;
-}
+.Events {}
