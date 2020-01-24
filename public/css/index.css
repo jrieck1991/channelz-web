@@ -1,10 +1,19 @@
-body {
-    font: 14px "Century Gothic", sans-serif;
-    margin: 20px;
+.Server {
+    border: 1px solid #999;
 }
 
-.server {
-    background: #fff;
+.Socket {
     border: 1px solid #999;
-    float: left;
+}
+
+.Channel {
+    border: 1px solid #999;
+}
+
+.SubChannel {
+    border: 1px solid #999;
+}
+
+.Events {
+    border: 1px solid #999;
 }
