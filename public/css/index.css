@@ -1,10 +1,15 @@
-body {
-    font: 14px "Century Gothic", sans-serif;
-    margin: 20px;
+.Server {
+    background-color: #264653;
 }
 
-.server {
-    background: #fff;
-    border: 1px solid #999;
-    float: left;
+.Socket {
+    background-color: #2A9D8F;
+}
+
+.Channel {
+    background-color: #E9C46A;
+}
+
+.SubChannel {
+    background-color: #F4A261;
 }

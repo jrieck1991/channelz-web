@@ -113,7 +113,6 @@ class ChannelsContainer extends React.Component {
     render() {
         return (
             <div className="ChannelsContainer">
-                <h2>Channels</h2>
                 {this.state.channel_ids.map((id, index) => {
                     return <Channel channel_id={id} />;
                 })}
@@ -121,7 +120,7 @@ class ChannelsContainer extends React.Component {
         )
     }
 }
-//class SubChannelsContainer extends React.Component {}
+
 class Server extends React.Component {
 
     constructor() {
@@ -160,9 +159,11 @@ class Server extends React.Component {
             <div className="Server" id={this.props.id}>
                 <h1>Server-{this.props.id}</h1>
 
-                <p>calls_started: {this.state.calls_started}</p>
-                <p>calls_succeeded: {this.state.calls_succeeded}</p>
-                <p>last_call_started: {this.state.last_call_started_timestamp}</p>
+                <ul>
+                    <li>calls_started: {this.state.calls_started}</li>
+                    <li>calls_succeeded: {this.state.calls_succeeded}</li>
+                    <li>last_call_started: {this.state.last_call_started_timestamp}</li>
+                </ul>
 
                 <ListenerSockets server_id={this.props.id}/>
                 <ChannelsContainer />
